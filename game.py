@@ -21,6 +21,7 @@ class Game(QObject):
         self.en_img = QPixmap('./images/enemy_normal.png')
         self.eb_img = QPixmap('./images/enemy_boss.png')
         self.bu_img = QPixmap('./images/bullet.png')
+        self.de_img = QPixmap('./images/destroy.png')
 
         # 화면중앙에 아군 사각형
         x = self.rect.width()/4
@@ -112,7 +113,7 @@ class Game(QObject):
         
 
     def moveMy(self):
-        old_my = self.my
+        old_my = QRectF(self.my)
         sp = 3
         if self.L:
             self.my.translate(-sp, 0)
@@ -127,7 +128,7 @@ class Game(QObject):
 
     def moveEnemy(self):
         for e in self.enemies:
-            old_e = e.rect
+            old_e = QRectF(e.rect)
             x = 1
             y = 0.5
 
@@ -150,7 +151,7 @@ class Game(QObject):
     def moveBullet(self):
         sp = 5
         for b in self.bullets:
-            old_b = b.rect
+            old_b = QRectF(b.rect)
 
             b.rect.translate(sp, 0)
 
@@ -166,6 +167,8 @@ class Game(QObject):
                         e.isDead = True
                     b.isDead = True
                     break        
+            
+            self.rePaint(old_b, b.rect)
 
     def rePaint(self, old_rect, rect):
         # 이전 영역과 새로운 영역을 합친 영역만 새로그림(효율성)
@@ -183,7 +186,7 @@ class Game(QObject):
 
             if self.moveEnemy()==False:
                 self.run = False
-                self.my_img = QPixmap('./images/destroy.png')
+                self.my_img = QPixmap(self.de_img)
                 self.rePaint(self.my, self.my)
                 self.gover_signal.emit()                
 
